@@ -1,5 +1,4 @@
 defmodule Ticker do
-#  @interval 2000   # 2 seconds
   @name :ticker
 
   def start do
@@ -16,11 +15,13 @@ defmodule Ticker do
       { :register, pid } ->
         IO.puts "registering #{inspect pid}"
         added_clients = [pid|clients] 
+
         Enum.with_index(added_clients)
         |> Enum.each(fn {client, index} ->
           next = Enum.at(added_clients, Integer.mod((index + 1), length(added_clients)))
           send client, { :next, next }
         end)
+
         if length(added_clients) < 2 do
             IO.inspect "tick from server"
             send Enum.at(added_clients, 0), { :tick }
